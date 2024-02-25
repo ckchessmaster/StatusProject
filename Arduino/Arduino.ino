@@ -19,7 +19,7 @@ void received(char*);
 SerialLineReader reader(Serial, received);
 
 void setup() {
-  Serial.begin(115200);
+  Serial.begin(9600);
   
   // Start the receiver and if not 3. parameter specified, take LED_BUILTIN pin from the internal boards definition as default feedback LED
   IrReceiver.begin(IR_RECEIVE_PIN, ENABLE_LED_FEEDBACK);
