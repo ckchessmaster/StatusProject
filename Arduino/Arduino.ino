@@ -57,5 +57,4 @@ void received(char *line) {
     case IR_COLOR_PURPLE: IrSender.sendNEC(IR_DEFAULT_ADDRESS_HEX, IR_COLOR_PURPLE_HEX, 1); break;
     default: break;
   }
-  
 }
