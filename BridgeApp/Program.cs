@@ -1,22 +1,31 @@
 ﻿using System.IO.Ports;
-using System.Text;
 
 namespace BridgeApp;
 
 class Program
 {
-    const int baudRate = 9600;
-    const string port = "COM3";
-
+    private static bool running = false;
     static void Main(string[] args)
     {
         Console.WriteLine("Bridge starting up...");
-        SerialPort serialPort = new(port, baudRate);
-        serialPort.Open();
 
-        serialPort.WriteLine("2");
-        Console.WriteLine(serialPort.ReadLine());
+        SerialComHandler arduino = new("COM3", 9600);
+        arduino.Start();
+        running = true;
 
-        serialPort.Close();
+        while (running)
+        {
+            string? userInput = Console.ReadLine();
+            if (userInput == "quit")
+            {
+                running = false;
+            } 
+            else if (int.TryParse(userInput, out int value))
+            {
+                arduino.WriteSerial(userInput);
+            }
+        }
+
+        arduino.Stop();
     }
 }
