@@ -2,7 +2,7 @@ using System.IO.Ports;
 
 namespace BridgeApp;
 
-class SerialComHandler
+class SerialComHandler : IDisposable
 {
     private readonly SerialPort ComPort;
     private readonly Thread ReadThread;
@@ -17,6 +17,11 @@ class SerialComHandler
             ReadTimeout = 500,
             WriteTimeout = 500
         };
+    }
+
+    public void Dispose()
+    {
+        ComPort.Dispose();
     }
 
     public void Start()

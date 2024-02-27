@@ -1,31 +1,51 @@
-﻿using System.IO.Ports;
+﻿using BridgeApp;
+using Microsoft.Extensions.Configuration;
 
-namespace BridgeApp;
+bool running = false;
+Console.WriteLine("Bridge starting up...");
 
-class Program
+IConfiguration config = new ConfigurationBuilder()
+    .AddJsonFile("appsettings.json", optional: false)
+    .AddJsonFile("appsettings.Development.json", optional: true)
+    .AddUserSecrets<Program>()
+    .Build();
+
+SerialComHandler arduino = new("COM3", 9600);
+arduino.Start();
+running = true;
+
+TeamsClientWebsocket teamsClient = new();
+await teamsClient.Init(new Action<TeamsStatus>((status) => OnTeamsStatusUpdated(arduino, status)), new CancellationToken());
+
+while (running)
 {
-    private static bool running = false;
-    static void Main(string[] args)
+    string? userInput = Console.ReadLine();
+    if (userInput == "quit")
     {
-        Console.WriteLine("Bridge starting up...");
+        running = false;
+    }
+    else if (int.TryParse(userInput, out int value))
+    {
+        arduino.WriteSerial(userInput);
+    }
+}
 
-        SerialComHandler arduino = new("COM3", 9600);
-        arduino.Start();
-        running = true;
+arduino.Stop();
 
-        while (running)
-        {
-            string? userInput = Console.ReadLine();
-            if (userInput == "quit")
-            {
-                running = false;
-            } 
-            else if (int.TryParse(userInput, out int value))
-            {
-                arduino.WriteSerial(userInput);
-            }
-        }
-
-        arduino.Stop();
+static void OnTeamsStatusUpdated(SerialComHandler comHandler, TeamsStatus status)
+{
+    switch (status)
+    {
+        case TeamsStatus.InMeeting:
+        case TeamsStatus.Presenting:
+            comHandler.WriteSerial(((int)LightCodes.On).ToString());
+            comHandler.WriteSerial(((int)LightCodes.Red).ToString());
+            break;
+        case TeamsStatus.Unknown:
+        case TeamsStatus.NotInMeeting:
+        default:
+            comHandler.WriteSerial(((int)LightCodes.On).ToString());
+            comHandler.WriteSerial(((int)LightCodes.Green).ToString());
+            break;
     }
 }
