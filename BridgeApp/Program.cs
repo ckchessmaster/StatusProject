@@ -14,7 +14,7 @@ SerialComHandler arduino = new("COM3", 9600);
 arduino.Start();
 running = true;
 
-TeamsClientWebsocket teamsClient = new();
+TeamsClient teamsClient = new();
 await teamsClient.Init(new Action<TeamsStatus>((status) => OnTeamsStatusUpdated(arduino, status)), new CancellationToken());
 
 while (running)

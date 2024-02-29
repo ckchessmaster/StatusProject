@@ -35,13 +35,21 @@ void loop() {
 
   // Handle IR input
   if (IrReceiver.decode()) {
-    Serial.println("IR command recieved, forwarding... ");
+    Serial.print(F("IR command recieved: "));
     IrReceiver.printIRResultShort(&Serial);
-    Serial.println();
 
-    // Repeater
-    IrSender.sendNEC(IrReceiver.decodedIRData.address, IrReceiver.decodedIRData.command, 1);
+    if (IrReceiver.decodedIRData.protocol != UNKNOWN)
+    {
+      Serial.println(F("Forwarding..."));
+      IrSender.sendNEC(IrReceiver.decodedIRData.address, IrReceiver.decodedIRData.command, 1);
+    }
+    else
+    {
+      Serial.println(F("Unknown Protocol, skipping..."));
+    }
+
     IrReceiver.resume(); // Enable receiving of the next value
+    Serial.println();
   }
 }
 

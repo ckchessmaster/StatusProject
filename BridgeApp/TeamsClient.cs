@@ -4,7 +4,14 @@ using System.Text;
 
 namespace BridgeApp;
 
-public class TeamsClientWebsocket : ITeamsClient, IAsyncDisposable, IDisposable
+public enum TeamsStatus
+{
+    InMeeting,
+    Presenting,
+    NotInMeeting,
+    Unknown
+}
+public class TeamsClient : IAsyncDisposable, IDisposable
 {
     private readonly Thread receiveThread;
     private readonly SocketsHttpHandler handler;
@@ -14,7 +21,7 @@ public class TeamsClientWebsocket : ITeamsClient, IAsyncDisposable, IDisposable
     private TeamsStatus currentStatus = TeamsStatus.Unknown;
     private Action<TeamsStatus>? statusUpdateCallback;
 
-    public TeamsClientWebsocket()
+    public TeamsClient()
     {
         receiveThread = new Thread(Recieve);
         handler = new SocketsHttpHandler();
