@@ -67,7 +67,9 @@ public class TeamsClient : IAsyncDisposable, IDisposable
             do
             {
                 result = await ws.ReceiveAsync(buffer, new CancellationToken());
+#pragma warning disable CS8604 // Possible null reference argument. Ignoring this for now.
                 stream.Write(buffer.Array, buffer.Offset, result.Count);
+#pragma warning restore CS8604 // Possible null reference argument.
             } while (!result.EndOfMessage);
 
             stream.Seek(0, SeekOrigin.Begin);

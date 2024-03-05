@@ -1,6 +1,6 @@
 namespace BridgeApp;
 
-public enum LightCodes
+public enum LightCode
 {
     Off = 0,
     On = 1,

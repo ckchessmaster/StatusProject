@@ -12,11 +12,7 @@ class SerialComHandler : IDisposable
     public SerialComHandler(string port, int baudRate = 9600)
     {
         ReadThread = new Thread(ReadSerial);
-        ComPort = new SerialPort(port, baudRate)
-        {
-            ReadTimeout = 500,
-            WriteTimeout = 500
-        };
+        ComPort = new SerialPort(port, baudRate);
     }
 
     public void Dispose()
